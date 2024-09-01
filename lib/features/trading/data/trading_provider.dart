@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import '../../../core/models/trading_instrument.dart';
 import '../../../core/services/websocket_service.dart';
