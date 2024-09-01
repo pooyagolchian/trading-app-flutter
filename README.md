@@ -43,7 +43,7 @@ trading_app/
 
 - **lib/main.dart**: The entry point of the application. It sets up the necessary providers and initializes the app.
 
-- **lib/routes.dart**: Manages the routes and navigation within the application.
+- **lib/routes.dart**: Manages the routes and navigation within the application. (We don't have it yet cause it's a single page app)
 
 ## How It Works
 
@@ -85,7 +85,7 @@ The project follows SOLID principles to ensure maintainable, scalable, and testa
 ### Prerequisites
 
 - **Flutter SDK**: Make sure you have Flutter installed on your machine.
-- **CocoaPods**: Required for iOS development (as described earlier).
+- **CocoaPods**: Required for iOS development.
 
 ### Running the App
 
@@ -124,4 +124,43 @@ sh flutter-test-mock-build.sh //For generate a mock data
 ```
 
 
+
 ![Trading App ScreenShot](./app-screenshot.png)
+
+
+--- 
+
+## API Information
+
+This app uses the [Finnhub Stock API](https://finnhub.io/) to fetch real-time stock data via WebSocket. The API provides financial data, including stock prices, forex rates, and cryptocurrency prices, which are crucial for the functionality of this app.
+
+### Setting Up the API Key
+
+To use the Finnhub API, you need to obtain an API key by signing up on the [Finnhub website](https://finnhub.io/). Follow these steps:
+
+1. **Sign Up for Finnhub**:
+    - Visit the [Finnhub website](https://finnhub.io/).
+    - Sign up for a free account to get access to an API key. Depending on your needs, you can also choose a paid plan for more features.
+
+2. **Obtain Your API Key**:
+    - After signing up, log in to your Finnhub account.
+    - Go to the API section in your account dashboard and copy your API key.
+
+3. **Configure the API Key in the App**:
+    - Create a `.env` file in the root directory of your Flutter project.
+    - Add your API key to the `.env` file as follows:
+
+      ```env
+      FINNHUB_API_KEY=your_finnhub_api_key_here
+      ```
+
+4. **Make Sure the `.env` File is Not Committed to Git**:
+    - The `.env` file should be listed in `.gitignore` to prevent it from being committed to version control:
+
+      ```plaintext
+      .env
+      ```
+
+5. **Using the API Key in the App**:
+    - The app is configured to load the API key from the `.env` file using the `flutter_dotenv` package.
+    - The key is used to establish a WebSocket connection to Finnhub for fetching real-time trading data.
