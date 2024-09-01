@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import '../../../core/models/trading_instrument.dart';
 import '../../../core/services/websocket_service.dart';
@@ -9,57 +8,61 @@ class TradingProvider with ChangeNotifier {
 
   TradingProvider({IWebSocketService? webSocketService})
       : _webSocketService = webSocketService ?? WebSocketService() {
-    listenToPriceStream();
+    _listenToPriceStream();
   }
 
-  List<TradingInstrument> get instruments => _instruments;
+  List<TradingInstrument> get instruments => List.unmodifiable(_instruments);
 
   void addInstrument(String symbol) {
-    final instrument = TradingInstrument(symbol: symbol, price: 0.0);
-    _instruments.add(instrument);
-    _webSocketService.subscribe(symbol);
-    notifyListeners();
+    if (!isSymbolAdded(symbol)) {
+      final instrument = TradingInstrument(symbol: symbol, price: 0.0);
+      _instruments.add(instrument);
+      _webSocketService.subscribe(symbol);
+      notifyListeners();
+    }
   }
 
   bool isSymbolAdded(String symbol) {
     return _instruments.any((instrument) => instrument.symbol == symbol);
   }
 
-  void updatePrice(String symbol, double newPrice) {
-    try {
-      final instrument =
-          _instruments.firstWhere((element) => element.symbol == symbol);
-      instrument.updatePrice(newPrice);
-      notifyListeners();
-    } catch (e) {
-      print('Instrument with symbol $symbol not found.');
-    }
+  void _updatePrice(String symbol, double newPrice) {
+    final instrument = _instruments.firstWhere(
+          (element) => element.symbol == symbol,
+      orElse: () => throw Exception('Instrument with symbol $symbol not found.'),
+    );
+    instrument.updatePrice(newPrice);
+    notifyListeners();
   }
 
-  void listenToPriceStream() {
+  void _listenToPriceStream() {
     _webSocketService.priceStream.listen((data) {
       if (data['type'] == 'trade') {
         for (var tradeData in data['data']) {
           final symbol = tradeData['s'];
-          final dynamic price = tradeData['p'];
-          final double parsedPrice;
-          if ((price is Double)) {
-            parsedPrice = price as double;
-            print(parsedPrice);
-          } else {
-            parsedPrice = (price is double)
-                ? price.toDouble()
-                : double.tryParse(price.toString()) ?? 0.0;
-          }
-          final double formattedPrice =
-              double.parse(parsedPrice.toStringAsFixed(2));
-          print('Symbol: $symbol, Price: $formattedPrice');
-          updatePrice(symbol, formattedPrice);
+          final price = tradeData['p'];
+
+          // Safely parse the price and ensure it's a double with two decimal places
+          final parsedPrice = _parsePrice(price);
+
+          print('Symbol: $symbol, Price: $parsedPrice');
+          _updatePrice(symbol, parsedPrice);
         }
       }
     }, onError: (error) {
       print('WebSocket error: $error');
     });
+  }
+
+  double _parsePrice(dynamic price) {
+    if (price is int) {
+      return price.toDouble();
+    } else if (price is double) {
+      return double.parse(price.toStringAsFixed(2));
+    } else {
+      final parsed = double.tryParse(price.toString()) ?? 0.0;
+      return double.parse(parsed.toStringAsFixed(2));
+    }
   }
 
   @override
