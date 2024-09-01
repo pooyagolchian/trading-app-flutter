@@ -14,7 +14,6 @@ class WebSocketService implements IWebSocketService {
 
   WebSocketService({WebSocketChannel? channel})
       : _channel = channel ?? WebSocketChannel.connect(_buildUri()) {
-    _checkApiKey();
     _logConnectionStatus();
   }
 
