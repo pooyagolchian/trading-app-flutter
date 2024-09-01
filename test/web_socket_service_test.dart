@@ -20,16 +20,15 @@ void main() {
     mockSink = MockWebSocketSink();
     when(mockChannel.sink).thenReturn(mockSink);
     when(mockSink.close(any, any)).thenAnswer((_) async => null);
-
     webSocketService = WebSocketService(channel: mockChannel);
   });
 
   test('should subscribe to a symbol', () {
-
     const symbol = 'BINANCE:BTCUSDT';
     when(mockSink.add(any)).thenReturn(null);
     webSocketService.subscribe(symbol);
-    final expectedMessage = json.encode({'type': 'subscribe', 'symbol': symbol});
+    final expectedMessage =
+        json.encode({'type': 'subscribe', 'symbol': symbol});
     verify(mockSink.add(expectedMessage)).called(1);
   });
 
@@ -37,7 +36,8 @@ void main() {
     const symbol = 'BINANCE:BTCUSDT';
     when(mockSink.add(any)).thenReturn(null);
     webSocketService.unsubscribe(symbol);
-    final expectedMessage = json.encode({'type': 'unsubscribe', 'symbol': symbol});
+    final expectedMessage =
+        json.encode({'type': 'unsubscribe', 'symbol': symbol});
     verify(mockSink.add(expectedMessage)).called(1);
   });
   test('should close the WebSocket connection on dispose', () {
@@ -46,18 +46,13 @@ void main() {
   });
 
   test('should throw an exception if API key is missing', () {
-
     dotenv.env['FINNHUB_API_KEY'] = '';
-
-
     expect(() => WebSocketService(channel: mockChannel), throwsException);
   });
 
   test('should log data received from WebSocket', () {
-
     const event = '{"type":"trade","data":[{"p":120.5,"s":"BINANCE:BTCUSDT"}]}';
     when(mockChannel.stream).thenAnswer((_) => Stream.value(event));
-
 
     webSocketService.priceStream.listen((data) {
       expect(data['type'], equals('trade'));
@@ -65,23 +60,19 @@ void main() {
       expect(data['data'][0]['s'], equals('BINANCE:BTCUSDT'));
     });
 
-
     verify(mockChannel.stream).called(1);
   });
 
   test('should handle WebSocket error', () {
-
     const errorMessage = 'WebSocket error occurred';
     when(mockChannel.stream).thenAnswer((_) => Stream.error(errorMessage));
 
-
     webSocketService.priceStream.listen(
-          (_) {},
+      (_) {},
       onError: (error) {
         expect(error, equals(errorMessage));
       },
     );
-
 
     verify(mockChannel.stream).called(1);
   });

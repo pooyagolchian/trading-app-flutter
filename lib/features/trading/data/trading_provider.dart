@@ -28,7 +28,8 @@ class TradingProvider with ChangeNotifier {
 
   void updatePrice(String symbol, double newPrice) {
     try {
-      final instrument = _instruments.firstWhere((element) => element.symbol == symbol);
+      final instrument =
+          _instruments.firstWhere((element) => element.symbol == symbol);
       instrument.updatePrice(newPrice);
       notifyListeners();
     } catch (e) {
@@ -48,10 +49,11 @@ class TradingProvider with ChangeNotifier {
             print(parsedPrice);
           } else {
             parsedPrice = (price is double)
-              ? price.toDouble()
-              : double.tryParse(price.toString()) ?? 0.0;
+                ? price.toDouble()
+                : double.tryParse(price.toString()) ?? 0.0;
           }
-          final double formattedPrice = double.parse(parsedPrice.toStringAsFixed(2));
+          final double formattedPrice =
+              double.parse(parsedPrice.toStringAsFixed(2));
           print('Symbol: $symbol, Price: $formattedPrice');
           updatePrice(symbol, formattedPrice);
         }
@@ -60,7 +62,6 @@ class TradingProvider with ChangeNotifier {
       print('WebSocket error: $error');
     });
   }
-
 
   @override
   void dispose() {

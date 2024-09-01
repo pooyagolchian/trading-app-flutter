@@ -17,24 +17,17 @@ void main() {
   late TradingProvider tradingProvider;
 
   setUp(() async {
-
     TestWidgetsFlutterBinding.ensureInitialized();
     await dotenv.load();
-
-
     mockWebSocketService = MockWebSocketService();
-
-
     when(mockWebSocketService.priceStream).thenAnswer(
-          (_) => Stream.empty(),
+      (_) => const Stream.empty(),
     );
-
-
     tradingProvider = TradingProvider(webSocketService: mockWebSocketService);
   });
 
-  testWidgets('TradingHomePage displays correctly and adds a symbol', (WidgetTester tester) async {
-
+  testWidgets('TradingHomePage displays correctly and adds a symbol',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -48,11 +41,9 @@ void main() {
 
     await tester.pumpAndSettle();
 
-
     await tester.enterText(find.byType(TextField), 'BINANCE:BTCUSDT');
     await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
-
 
     expect(find.text('BINANCE:BTCUSDT'), findsOneWidget);
     expect(find.byType(TradingListTile), findsOneWidget);

@@ -14,9 +14,10 @@ class WebSocketService implements IWebSocketService {
 
   WebSocketService({WebSocketChannel? channel})
       : _channel = channel ??
-      WebSocketChannel.connect(
-        Uri.parse('wss://ws.finnhub.io/?token=${dotenv.env['FINNHUB_API_KEY']}'),
-      ) {
+            WebSocketChannel.connect(
+              Uri.parse(
+                  'wss://ws.finnhub.io/?token=${dotenv.env['FINNHUB_API_KEY']}'),
+            ) {
     _logConnectionStatus();
     _checkApiKey();
   }
@@ -30,11 +31,11 @@ class WebSocketService implements IWebSocketService {
 
   @override
   Stream<Map<String, dynamic>> get priceStream => _channel.stream.map((event) {
-    _logReceivedData(event);
-    return json.decode(event) as Map<String, dynamic>;
-  }).handleError((error) {
-    _logError(error);
-  });
+        _logReceivedData(event);
+        return json.decode(event) as Map<String, dynamic>;
+      }).handleError((error) {
+        _logError(error);
+      });
 
   @override
   void subscribe(String symbol) {

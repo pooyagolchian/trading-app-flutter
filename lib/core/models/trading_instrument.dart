@@ -3,7 +3,8 @@ class TradingInstrument {
   double price;
   bool isUp;
 
-  TradingInstrument({required this.symbol, required this.price, this.isUp = false});
+  TradingInstrument(
+      {required this.symbol, required this.price, this.isUp = false});
 
   void updatePrice(double newPrice) {
     isUp = newPrice > price;

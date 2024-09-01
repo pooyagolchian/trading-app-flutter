@@ -11,12 +11,10 @@ class TradingHomePage extends StatefulWidget {
 }
 
 class TradingHomePageState extends State<TradingHomePage> {
-  // Declare the TextEditingController as a private member
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void dispose() {
-    // Dispose the controller to free resources
     _searchController.dispose();
     super.dispose();
   }
