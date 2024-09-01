@@ -13,38 +13,39 @@ class WebSocketService implements IWebSocketService {
   final WebSocketChannel _channel;
 
   WebSocketService({WebSocketChannel? channel})
-      : _channel = channel ?? WebSocketChannel.connect(_buildUri()) {
+      : _channel = channel ??
+      WebSocketChannel.connect(
+        Uri.parse('wss://ws.finnhub.io/?token=${dotenv.env['FINNHUB_API_KEY']}'),
+      ) {
     _logConnectionStatus();
+    _checkApiKey();
   }
 
-  static Uri _buildUri() {
+  void _checkApiKey() {
     final apiKey = dotenv.env['FINNHUB_API_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
       throw Exception('API key is missing or not found in the .env file.');
     }
-    return Uri.parse('wss://ws.finnhub.io/?token=$apiKey');
   }
 
   @override
   Stream<Map<String, dynamic>> get priceStream => _channel.stream.map((event) {
     _logReceivedData(event);
     return json.decode(event) as Map<String, dynamic>;
-  }).handleError(_logError);
+  }).handleError((error) {
+    _logError(error);
+  });
 
   @override
   void subscribe(String symbol) {
-    _sendMessage({'type': 'subscribe', 'symbol': symbol});
+    _channel.sink.add(json.encode({'type': 'subscribe', 'symbol': symbol}));
     print('Subscribed to $symbol');
   }
 
   @override
   void unsubscribe(String symbol) {
-    _sendMessage({'type': 'unsubscribe', 'symbol': symbol});
+    _channel.sink.add(json.encode({'type': 'unsubscribe', 'symbol': symbol}));
     print('Unsubscribed from $symbol');
-  }
-
-  void _sendMessage(Map<String, dynamic> message) {
-    _channel.sink.add(json.encode(message));
   }
 
   @override
