@@ -122,3 +122,6 @@ We have two bash file for clear up the flutter before run the code and for mock 
 sh flutter-clearup.sh //For clear up the flutter projext
 sh flutter-test-mock-build.sh //For generate a mock data
 ```
+
+
+![Trading App ScreenShot](./app-screenshot.png)
