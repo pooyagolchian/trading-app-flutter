@@ -41,10 +41,7 @@ class TradingProvider with ChangeNotifier {
         for (var tradeData in data['data']) {
           final symbol = tradeData['s'];
           final price = tradeData['p'];
-
-          // Safely parse the price and ensure it's a double with two decimal places
           final parsedPrice = _parsePrice(price);
-
           print('Symbol: $symbol, Price: $parsedPrice');
           _updatePrice(symbol, parsedPrice);
         }
