@@ -119,7 +119,7 @@ flutter test
 We have two bash file for clear up the flutter before run the code and for mock test that we can run it for test
 
 ```bash
-sh flutter-clearup.sh //For clear up the flutter projext
+sh flutter-clearup.sh //For clear up the flutter project
 sh flutter-test-mock-build.sh //For generate a mock data
 ```
 
